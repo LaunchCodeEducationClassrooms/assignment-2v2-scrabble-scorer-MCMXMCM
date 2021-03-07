@@ -23,7 +23,7 @@ function oldScrabbleScorer(word) {
 		 if (oldPointStructure[pointValue].includes(word[i])) {
 			letterPoints += `Points for '${word[i]}': ${pointValue}\n`
 		 }
- 
+
 	  }
 	}
 	return letterPoints;
@@ -33,26 +33,102 @@ function oldScrabbleScorer(word) {
 // don't change the names or your program won't work as expected. //
 
 function initialPrompt() {
-   console.log("Let's play some scrabble! Enter a word:");
+    let userWord = input.question("Let's play some scrabble! Enter a word: ");
+    return userWord;
+}
+
+let simpleScore = {
+  name: 'Simple Score',
+  description: 'Each letter is worth 1 point.',
+  scorerFunction: function (userWord) {
+    return userWord.length;}
 };
 
-let simpleScore;
 
-let vowelBonusScore;
+let vowelBonusScore = {
+  name: 'Bonus Vowels',
+  description: 'Vowels are 3 pts, consonants are 1 pt.',
+  scorerFunction: function (userWord) {
+      userWord.toUpperCase();
 
-let scrabbleScore;
+      function vowelCounter (userWord) {
+       let matchCount = userWord.match(/[aeiou]/gi);
+       return matchCount === null ? 0 : matchCount.length;
+      }
 
-const scoringAlgorithms = [];
+      let vowelCount = vowelCounter(userWord);
+      let charCount = userWord.length;
+      let letterPoints = (charCount - vowelCount) + (vowelCount * 3);
+  
+    return letterPoints;
+  }
+};
 
-function scorerPrompt() {}
 
-function transform() {};
+let scrabbleScore = {
+  name: 'Scrabble',
+  description: 'The traditional scoring algorithm.',
+  scorerFunction: function (userWord) {
+  userWord = userWord.toLowerCase();
+  let points = 0;
+  for (let i = 0; i < userWord.length; i++) {
+    for (item in newPointStructure) {
+      if (userWord[i] === item) {
+        points += Number(newPointStructure[item]);
+      }
+    }
+  }
+  
+return points;
+}
+  }
 
-let newPointStructure;
+
+const scoringAlgorithms = [simpleScore, vowelBonusScore, scrabbleScore];
+
+function scorerPrompt() {
+  let userChoice = input.question(
+  `
+
+Which scoring algorithm would you like to use? Select the number that corresponds with your preferred scoring algorithm:
+
+  0: ${scoringAlgorithms[0].name}: ${scoringAlgorithms[0].description}
+  1: ${scoringAlgorithms[1].name}: ${scoringAlgorithms[1].description}
+  2: ${scoringAlgorithms[2].name}: ${scoringAlgorithms[2].description} 
+  
+  Enter your number here --> `)
+
+   switch (userChoice) {
+    case '0': 
+      userChoice = scoringAlgorithms[0];
+      break;
+    case '1':
+      userChoice = scoringAlgorithms[1];
+      break;
+    case '2':
+      userChoice = scoringAlgorithms[2];
+      break;
+  }
+  return userChoice;
+}
+
+function transform (oldPointStructure) {
+  let newObject = {};
+  for (const keyNumber in oldPointStructure) {
+    for ( let i = 0; i < oldPointStructure[keyNumber].length; i++) {
+      newObject[oldPointStructure[keyNumber][i].toLowerCase()] = keyNumber;
+    }
+  }
+  return newObject;
+}
+
+let newPointStructure = transform(oldPointStructure);
 
 function runProgram() {
-   initialPrompt();
-   
+   let userWord = initialPrompt();
+   let chosenAlgorithm = scorerPrompt();
+   let userScore = chosenAlgorithm.scorerFunction(userWord);
+   console.log(`Score for '${userWord}':  ${userScore}`);
 }
 
 // Don't write any code below this line //
