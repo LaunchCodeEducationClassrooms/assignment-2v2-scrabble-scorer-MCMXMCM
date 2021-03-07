@@ -49,18 +49,18 @@ let vowelBonusScore = {
   name: 'Bonus Vowels',
   description: 'Vowels are 3 pts, consonants are 1 pt.',
   scorerFunction: function (userWord) {
-      userWord.toUpperCase();
+    userWord = userWord.toUpperCase();
 
       function vowelCounter (userWord) {
-       let matchCount = userWord.match(/[aeiou]/gi);
-       return matchCount === null ? 0 : matchCount.length;
+        matchCount = userWord.match(/[aeiou]/gi);
+      return matchCount === null ? 0 : matchCount.length;
       }
 
-      let vowelCount = vowelCounter(userWord);
-      let charCount = userWord.length;
-      let letterPoints = (charCount - vowelCount) + (vowelCount * 3);
+    let vowelCount = vowelCounter(userWord);
+    let charCount = userWord.length;
+    let letterPoints = (charCount - vowelCount) + (vowelCount * 3);
   
-    return letterPoints;
+  return letterPoints;
   }
 };
 
@@ -69,34 +69,34 @@ let scrabbleScore = {
   name: 'Scrabble',
   description: 'The traditional scoring algorithm.',
   scorerFunction: function (userWord) {
-  userWord = userWord.toLowerCase();
-  let points = 0;
-  for (let i = 0; i < userWord.length; i++) {
-    for (item in newPointStructure) {
-      if (userWord[i] === item) {
-        points += Number(newPointStructure[item]);
+    userWord = userWord.toLowerCase();
+    points = 0;
+
+    for (let i = 0; i < userWord.length; i++) {
+      for (item in newPointStructure) {
+        if (userWord[i] === item) {
+         points += Number(newPointStructure[item]);
+        }
       }
-    }
+    } 
+  return points;
   }
-  
-return points;
-}
-  }
+};
 
 
 const scoringAlgorithms = [simpleScore, vowelBonusScore, scrabbleScore];
 
 function scorerPrompt() {
   let userChoice = input.question(
-  `
+      `
 
-Which scoring algorithm would you like to use? Select the number that corresponds with your preferred scoring algorithm:
+    Which scoring algorithm would you like to use? Select the number that corresponds with your preferred scoring algorithm:
 
-  0: ${scoringAlgorithms[0].name}: ${scoringAlgorithms[0].description}
-  1: ${scoringAlgorithms[1].name}: ${scoringAlgorithms[1].description}
-  2: ${scoringAlgorithms[2].name}: ${scoringAlgorithms[2].description} 
-  
-  Enter your number here --> `)
+      0: ${scoringAlgorithms[0].name}: ${scoringAlgorithms[0].description}
+      1: ${scoringAlgorithms[1].name}: ${scoringAlgorithms[1].description}
+      2: ${scoringAlgorithms[2].name}: ${scoringAlgorithms[2].description} 
+      
+      Enter your number here --> `)
 
    switch (userChoice) {
     case '0': 
@@ -128,7 +128,14 @@ function runProgram() {
    let userWord = initialPrompt();
    let chosenAlgorithm = scorerPrompt();
    let userScore = chosenAlgorithm.scorerFunction(userWord);
-   console.log(`Score for '${userWord}':  ${userScore}`);
+   console.log(
+      `
+      .........................................
+
+         >>> Score for '${userWord}':  ${userScore} <<<
+
+      .........................................
+`);
 }
 
 // Don't write any code below this line //
